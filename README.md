@@ -32,7 +32,7 @@ First, let's take care of the "nothing special" module, `domain`. You follow the
 ```
 
 Normally you would need to list other modules here as well, but you want to take advantage of already created archetypes, in other words, use them as dependencies. In Maven world, all the dependency declaration happens in POM. So let's close this file and look at your archetype's `pom.xml`:
-```
+```XML
 <project>
     <!-- ... -->
     <dependencies>
