@@ -37,10 +37,6 @@ public class AddModulesMojo extends AbstractMojo {
 			Set<Artifact> dependencies = project.getDependencyArtifacts();
 			for (ModuleDescription md : additionalModules) {
 				handleModule(md, findArtifact(md, dependencies));
-				/*
-				 * for each dependency if archetype merge metadata as module
-				 * copy resources insert <parent/> into pom.xml ???
-				 */
 			}
 			writeMetadata();
 		} catch (Exception e) {
