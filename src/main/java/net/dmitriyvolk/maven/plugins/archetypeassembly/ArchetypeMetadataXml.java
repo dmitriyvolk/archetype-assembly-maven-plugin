@@ -16,8 +16,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -86,9 +88,29 @@ public class ArchetypeMetadataXml {
 		return absorbModule(childModuleMetadata, null);
 	}
 	public ArchetypeMetadataXml absorbModule(Element childModuleMetadata, ModuleDescription md) {
-		String tagName = childModuleMetadata.getTagName();
-		if (!tagName.equals(ARCHETYPE_DESCRIPTOR)) 
-			throw new RuntimeException(String.format("Unknown element %s when expecting %s", tagName, ARCHETYPE_DESCRIPTOR));
+		String childMetadataTagName = childModuleMetadata.getTagName();
+		if (!childMetadataTagName.equals(ARCHETYPE_DESCRIPTOR)) 
+			throw new RuntimeException(String.format("Unknown element %s when expecting %s", childMetadataTagName, ARCHETYPE_DESCRIPTOR));
+		Element module = absorb(childModuleMetadata, md);
+		Node modules;
+		modules = getOrMakeTopLevelNode("modules");
+		modules.appendChild(module);
+		return this;
+	}
+
+	private Node getOrMakeTopLevelNode(String tagName) {
+		Node node;
+		NodeList nl = doc.getDocumentElement().getElementsByTagName(tagName);
+		if (nl == null || nl.getLength() == 0) {
+			node = doc.createElement(tagName);
+			doc.getDocumentElement().appendChild(node);
+		} else {
+			node = nl.item(0);
+		}
+		return node;
+	}
+
+	private Element absorb(Element childModuleMetadata, ModuleDescription md) {
 		Element module = doc.createElement(MODULE);
 		if (md == null) {
 			String moduleName = childModuleMetadata.getAttribute("name");
@@ -102,21 +124,54 @@ public class ArchetypeMetadataXml {
 		}
 		NodeList children = childModuleMetadata.getChildNodes(); 
 		for (int i = 0; i < children.getLength(); i++) {
-			Node newChild = doc.importNode(children.item(i), true);
-			module.appendChild(newChild);
+			absorbChild(module, children.item(i));
 		}
-		Node modules;
-		NodeList nl = doc.getDocumentElement().getElementsByTagName("modules");
-		if (nl == null || nl.getLength() == 0) {
-			modules = doc.createElement("modules");
-			doc.getDocumentElement().appendChild(modules);
+		return module;
+	}
+
+	private void absorbChild(Element module, Node newChild) {
+		if (newChild.getNodeName().equals("requiredProperties")) {
+			absorbProperties(newChild);
 		} else {
-			modules = nl.item(0);
+			Node imported = doc.importNode(newChild, true);
+			module.appendChild(imported);
 		}
-		modules.appendChild(module);
-		return this;
 	}
 	
+	private void absorbProperties(Node moduleRequiredPropertiesNode) {
+		Node requiredProperties = getOrMakeTopLevelNode("requiredProperties");
+		NodeList existingProperties = requiredProperties.getChildNodes();
+		NodeList moduleProperties = moduleRequiredPropertiesNode.getChildNodes();
+		for (int i = 0; i < moduleProperties.getLength(); i++) {
+			Node newProperty = moduleProperties.item(i);
+			if (!alreadyExists(newProperty, existingProperties)) {
+				Node imported = doc.importNode(newProperty, true);
+				requiredProperties.appendChild(imported);
+			}
+		}
+	}
+
+	private boolean alreadyExists(Node newProperty, NodeList existingProperties) {
+		for (int i = 0; i < existingProperties.getLength(); i++) {
+			Node existingProperty = existingProperties.item(i);
+			if (StringUtils.equals(getKeyAttr(existingProperty), getKeyAttr(newProperty))) {
+				return true;
+			}
+		}
+		return false;
+
+	}
+	
+	private String getKeyAttr(Node node) {
+		NamedNodeMap attrs = node.getAttributes();
+		if (attrs != null) {
+			Node keyAttr = attrs.getNamedItem("key");
+			if (keyAttr != null) {
+				return keyAttr.getNodeValue();
+			}
+		}
+		return null;
+	}
 	/**
 	 * Package-visible method used for testing
 	 * @return the DOM document

@@ -1,10 +1,11 @@
 archetype-assembly-maven-plugin
 ===============================
 
-This Maven plugin will help you build an archetype, containing modules provided by other archetypes.
+This Maven plugin will help you build an archetype containing modules provided by other archetypes. It will correctly merge both the archetype resources and the archetype metadata, including `<fileSets />` and `<requiredProperties />`
+
 
 Example
-----
+-------
 Let's say you want to create an archetype for a standard three-tier Java app. In terms of the source layout, you will probably need the following modules:
 
 + `domain`
