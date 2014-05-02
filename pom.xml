@@ -3,11 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.dmitriyvolk.maven.plugins</groupId>
 	<artifactId>archetype-assembly-maven-plugin</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>maven-plugin</packaging>
 	<name>Archetype Assembler Plugin</name>
 	<description>Plugin to assemble super-archetype from archetypes listed as dependencies</description>
-
 	<licenses>
   		<license>
     			<name>The Apache Software License, Version 2.0</name>
@@ -87,14 +86,17 @@
 			<build>
 				<plugins>
       					<plugin>
-        					<groupId>org.apache.maven.plugins</groupId>
-        					<artifactId>maven-gpg-plugin</artifactId>
+        					<groupId>org.kohsuke</groupId>
+        					<artifactId>pgp-maven-plugin</artifactId>
+        					<configuration>
+        						<secretkey>keyfile:/home/xbo/keys/dmitriy_dmitriyvolk_net_secret.asc</secretkey>
+        					</configuration>
         					<executions>
           						<execution>
             						<id>sign-artifacts</id>
             						<phase>verify</phase>
             						<goals>
-              						<goal>sign</goal>
+              							<goal>sign</goal>
             						</goals>
           						</execution>
         					</executions>
