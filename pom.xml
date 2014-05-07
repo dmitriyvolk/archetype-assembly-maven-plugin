@@ -7,6 +7,7 @@
 	<packaging>maven-plugin</packaging>
 	<name>Archetype Assembler Plugin</name>
 	<description>Plugin to assemble super-archetype from archetypes listed as dependencies</description>
+	<url>https://github.com/dmitriyvolk/archetype-assembly-maven-plugin</url>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
