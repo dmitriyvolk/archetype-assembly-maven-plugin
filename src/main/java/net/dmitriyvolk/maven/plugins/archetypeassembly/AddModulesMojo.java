@@ -34,6 +34,7 @@ public class AddModulesMojo extends AbstractMojo {
 		assert archetypeMetadataFile.exists();
 		try {
 			metadata = new ArchetypeMetadataXml(archetypeMetadataFile);
+			@SuppressWarnings("unchecked")
 			Set<Artifact> dependencies = project.getDependencyArtifacts();
 			for (ModuleDescription md : additionalModules) {
 				handleModule(md, findArtifact(md, dependencies));

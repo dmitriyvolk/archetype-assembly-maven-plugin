@@ -1,0 +1,24 @@
+  ------
+  Introduction
+  ------
+  Dmitriy Volk
+  ------
+   2014-05-07
+
+Archetype Assembly Plugin
+
+  The Archetype Assembly Plugin will help you build an archetype containing modules provided 
+  by other archetypes. It will correctly merge both the archetype resources and the archetype metadata, 
+  including <<<\<fileSets /\>>>> and <<<\<requiredProperties /\>>>>
+  
+* Goals
+
+  The plugin has only one goal, <<<add-modules>>>, which will inject third-party archetypes 
+  as modules into your archetype.
+  
+* Usage
+
+  Please refer to the plugin's {{{https://github.com/dmitriyvolk/archetype-assembly-maven-plugin}GitHub page}} for usage examples. 
+ 
+ []
+ 

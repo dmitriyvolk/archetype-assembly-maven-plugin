@@ -3,15 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.dmitriyvolk.maven.plugins</groupId>
 	<artifactId>archetype-assembly-maven-plugin</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>maven-plugin</packaging>
 	<name>Archetype Assembler Plugin</name>
 	<description>Plugin to assemble super-archetype from archetypes listed as dependencies</description>
 	<licenses>
-  		<license>
-    			<name>The Apache Software License, Version 2.0</name>
-    			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-  		</license>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
 	</licenses>
 	<developers>
 		<developer>
@@ -20,19 +20,19 @@
 		</developer>
 	</developers>
 	<scm>
-  		<connection>scm:git:git@github.com:dmitriyvolk/archetype-assembly-maven-plugin.git</connection>
-  		<developerConnection>scm:git:git@github.com:dmitriyvolk/archetype-assembly-maven-plugin.git</developerConnection>
-  		<url>git@github.com:dmitriyvolk/archetype-assembly-maven-plugin.git</url>
+		<connection>scm:git:git@github.com:dmitriyvolk/archetype-assembly-maven-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:dmitriyvolk/archetype-assembly-maven-plugin.git</developerConnection>
+		<url>git@github.com:dmitriyvolk/archetype-assembly-maven-plugin.git</url>
 	</scm>
 	<distributionManagement>
-	  <snapshotRepository>
-	    <id>ossrh</id>
-	    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	  </snapshotRepository>
-	  <repository>
-	    <id>ossrh</id>
-	    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-	  </repository>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 	</distributionManagement>
 	<dependencies>
 		<dependency>
@@ -88,56 +88,76 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-invoker-plugin</artifactId>
+				<version>1.8</version>
+				<configuration>
+					<projectsDirectory>src/it</projectsDirectory>
+					<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+					<settingsFile>src/it/settings.xml</settingsFile>
+					<localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+					<postBuildHookScript>verify.groovy</postBuildHookScript>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>install</goal>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-        <profiles>
+	<profiles>
 		<profile>
 			<id>release</id>
 			<build>
 				<plugins>
-      					<plugin>
-        					<groupId>org.kohsuke</groupId>
-        					<artifactId>pgp-maven-plugin</artifactId>
-        					<configuration>
-        						<secretkey>keyfile:/home/xbo/keys/dmitriy_dmitriyvolk_net_secret.asc</secretkey>
-        					</configuration>
-        					<executions>
-          						<execution>
-            						<id>sign-artifacts</id>
-            						<phase>verify</phase>
-            						<goals>
-              							<goal>sign</goal>
-            						</goals>
-          						</execution>
-        					</executions>
-      					</plugin>
 					<plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-source-plugin</artifactId>
-					  <version>2.2.1</version>
-					  <executions>
-					    <execution>
-					      <id>attach-sources</id>
-					      <goals>
-						<goal>jar-no-fork</goal>
-					      </goals>
-					    </execution>
-					  </executions>
+						<groupId>org.kohsuke</groupId>
+						<artifactId>pgp-maven-plugin</artifactId>
+						<configuration>
+							<secretkey>keyfile:/home/xbo/keys/dmitriy_dmitriyvolk_net_secret.asc</secretkey>
+						</configuration>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 					<plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-javadoc-plugin</artifactId>
-					  <version>2.9.1</version>
-					  <executions>
-					    <execution>
-					      <id>attach-javadocs</id>
-					      <goals>
-						<goal>jar</goal>
-					      </goals>
-					    </execution>
-					  </executions>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
- 				</plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9.1</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>
